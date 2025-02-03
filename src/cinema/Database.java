@@ -8,7 +8,7 @@ import java.sql.Statement;
 public class Database {
 
     // SQLite uses a file-based connection string.
-    private String url = "jdbc:sqlite:cinema-system.db";
+    String url = "jdbc:sqlite:cinema-system.db"; // Timeout of 3 seconds
     private Statement statement;
 
     public Database() {
@@ -16,6 +16,8 @@ public class Database {
             // Establish the connection (database file is created automatically if it does not exist)
             Connection connection = DriverManager.getConnection(url);
             statement = connection.createStatement();
+            statement.execute("PRAGMA journal_mode = WAL;");
+
             // Initialize main tables if they do not exist
             initializeTables();
         } catch (Exception e) {

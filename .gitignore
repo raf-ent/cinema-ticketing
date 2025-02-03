@@ -2,3 +2,5 @@
 /src/tests
 /src/*.db
 *.db
+*.db-shm
+*.db-wal
