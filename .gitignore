@@ -1,3 +1,4 @@
 /out
 /src/tests
-test.db
+/src/*.db
+*.db
