@@ -25,14 +25,10 @@ public class MoviesDatabase {
         String rating = s.next();
         int ID = getNextID(database);
 
-        String insert = "INSERT INTO `movies`(`ID`, `Name`, `Language`, `Genre`,"
-                + " `Running Time`, `Starring`, `Rating`) VALUES ('"+ID+"','"+name+
-                "','"+language+"','"+genre+"','"+runningTime+"','"+starring+"','"+rating
-                +"');";
+        String insert = "INSERT INTO movies(ID, Name, Language, Genre, \"Running Time\", Starring, Rating) VALUES ("
+                + ID + ", '" + name + "', '" + language + "', '" + genre + "', " + runningTime + ", '" + starring + "', '" + rating + "');";
 
-        String create = "CREATE TABLE `Movie "+ID+" - Shows` "
-                + "(ID int, showTime text, capacity int, "
-                + "availableSeats int, place text);";
+        String create = "CREATE TABLE \"Movie " + ID + " - Shows\" (ID INTEGER, showTime TEXT, capacity INTEGER, availableSeats INTEGER, place TEXT);";
         try {
             database.getStatement().execute(insert);
             database.getStatement().execute(create);
@@ -45,7 +41,7 @@ public class MoviesDatabase {
 
     public static ArrayList<Movie> getAllMovies(Database database) {
         ArrayList<Movie> movies = new ArrayList<>();
-        String select = "SELECT * FROM `movies`;";
+        String select = "SELECT * FROM movies;";
         try {
             ResultSet rs = database.getStatement().executeQuery(select);
             while (rs.next()) {
@@ -68,10 +64,9 @@ public class MoviesDatabase {
     public static int getNextID(Database database) {
         int ID = 0;
         ArrayList<Movie> movies = getAllMovies(database);
-        int size = movies.size();
-        if (size!=0) {
-            Movie lastMovie = movies.get(size-1);
-            ID = lastMovie.getID()+1;
+        if (!movies.isEmpty()) {
+            Movie lastMovie = movies.get(movies.size() - 1);
+            ID = lastMovie.getID() + 1;
         }
         return ID;
     }
@@ -111,13 +106,12 @@ public class MoviesDatabase {
         String rating = s.next();
         if (!rating.equals("-1")) movie.setRating(rating);
 
-        String update = "UPDATE `movies` SET `Name`='"+movie.getName()+"',"
-                + "`Language`='"+movie.getLanguage()+"',"
-                + "`Genre`='"+movie.getGenre()+"',"
-                + "`Running Time`='"+movie.getRunningTime()+"',"
-                + "`Starring`='"+movie.getStarring()+"',"
-                + "`Rating`='"+movie.getRating()+"'"
-                + " WHERE `ID` = "+movie.getID()+" ;";
+        String update = "UPDATE movies SET Name='" + movie.getName() + "', "
+                + "Language='" + movie.getLanguage() + "', "
+                + "Genre='" + movie.getGenre() + "', "
+                + "\"Running Time\"=" + movie.getRunningTime() + ", "
+                + "Starring='" + movie.getStarring() + "', "
+                + "Rating='" + movie.getRating() + "' WHERE ID = " + movie.getID() + ";";
         try {
             database.getStatement().execute(update);
             System.out.println("Movie updated successfully");
@@ -137,8 +131,7 @@ public class MoviesDatabase {
 
     public static Movie getMovie(int ID, Database database) {
         Movie movie = new Movie();
-        String select = "SELECT `ID`, `Name`, `Language`, `Genre`, `Running Time`,"
-                + " `Starring`, `Rating` FROM `movies` WHERE `ID` = "+ID+" ;";
+        String select = "SELECT ID, Name, Language, Genre, \"Running Time\", Starring, Rating FROM movies WHERE ID = " + ID + ";";
         try {
             ResultSet rs = database.getStatement().executeQuery(select);
             rs.next();
@@ -172,8 +165,8 @@ public class MoviesDatabase {
             }
         }
 
-        String delete = "DELETE FROM `movies` WHERE `ID` = "+ID+" ;";
-        String drop = "DROP TABLE `Movie "+ID+" - Shows`;";
+        String delete = "DELETE FROM movies WHERE ID = " + ID + ";";
+        String drop = "DROP TABLE \"Movie " + ID + " - Shows\";";
         try {
             database.getStatement().execute(delete);
             database.getStatement().execute(drop);
@@ -202,10 +195,8 @@ public class MoviesDatabase {
 
         int showID = getNextShowID(database, movieID);
 
-        String insert = "INSERT INTO `movie "+movieID+" - shows`(`ID`, `showTime`, "
-                + "`capacity`, `availableSeats`, `place`) VALUES ('"+showID+"',"
-                + "'"+date+"  "+time+"','"+capacity+"','"+capacity+"',"
-                + "'"+place+"');";
+        String insert = "INSERT INTO \"Movie " + movieID + " - Shows\" (ID, showTime, capacity, availableSeats, place) VALUES ("
+                + showID + ", '" + date + "  " + time + "', " + capacity + ", " + capacity + ", '" + place + "');";
 
         try {
             database.getStatement().execute(insert);
@@ -241,11 +232,9 @@ public class MoviesDatabase {
     private static int getNextShowID(Database database, int movieID) {
         int ID = 0;
         ArrayList<Show> shows = getAllMovieShows(database, movieID);
-        int size = shows.size();
-        if (size>0) {
-            int lastIndex = size-1;
-            Show lastShow = shows.get(lastIndex);
-            ID = lastShow.getID()+1;
+        if (!shows.isEmpty()) {
+            Show lastShow = shows.get(shows.size() - 1);
+            ID = lastShow.getID() + 1;
         }
         return ID;
     }
@@ -314,11 +303,11 @@ public class MoviesDatabase {
             show.setPlace(place);
         }
 
-        String update = "UPDATE `movie "+movieID+" - shows` SET "
-                + "`showTime`='"+show.getDate()+"  "+show.getTime()+"',"
-                + "`capacity`='"+show.getCapacity()+"',"
-                + "`availableSeats`='"+show.getAvailableSeats()+"',"
-                + "`place`='"+show.getPlace()+"' WHERE `ID` = "+show.getID()+" ;";
+        String update = "UPDATE \"Movie " + movieID + " - Shows\" SET "
+                + "showTime = '" + show.getDate() + "  " + show.getTime() + "', "
+                + "capacity = " + show.getCapacity() + ", "
+                + "availableSeats = " + show.getAvailableSeats() + ", "
+                + "place = '" + show.getPlace() + "' WHERE ID = " + show.getID() + ";";
         try {
             database.getStatement().execute(update);
             System.out.println("Show edited successfully");
@@ -339,8 +328,7 @@ public class MoviesDatabase {
 
     public static Show getShowTime(int movieID, int showID, Database database) {
         Show show = new Show();
-        String select = "SELECT `ID`, `showTime`, `capacity`, `availableSeats`,"
-                + " `place` FROM `movie "+movieID+" - shows` WHERE `ID` = "+showID+" ;";
+        String select = "SELECT ID, showTime, capacity, availableSeats, place FROM \"Movie " + movieID + " - Shows\" WHERE ID = " + showID + ";";
         try {
             ResultSet rs = database.getStatement().executeQuery(select);
             rs.next();
@@ -381,8 +369,7 @@ public class MoviesDatabase {
             return;
         }
 
-        String delete = "DELETE FROM `movie "+movieID+" - shows` "
-                + "WHERE `ID` = "+showID+" ;";
+        String delete = "DELETE FROM \"Movie " + movieID + " - Shows\" WHERE ID = " + showID + ";";
         try {
             database.getStatement().execute(delete);
             System.out.println("Show deleted successfully");

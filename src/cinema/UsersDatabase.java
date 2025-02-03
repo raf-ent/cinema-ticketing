@@ -9,15 +9,11 @@ public class UsersDatabase {
     public static boolean isEmailUsed(String email, Database database) {
         boolean isUsed = false;
         try {
-            ResultSet rs = database.getStatement().executeQuery("SELECT `ID`, "
-                    + "`firstName`, `lastName`, `email`, `phoneNumber`, `password` "
-                    + "FROM `visitors` WHERE `email` = '"+email+"';");
+            ResultSet rs = database.getStatement().executeQuery("SELECT ID, firstName, lastName, email, phoneNumber, password FROM visitors WHERE email = '" + email + "';");
             isUsed = rs.next();
 
             if (!isUsed) {
-                ResultSet rs2 = database.getStatement().executeQuery("SELECT `ID`, "
-                        + "`firstName`, `lastName`, `email`, `phoneNumber`, `password` "
-                        + "FROM `admins` WHERE `email` = '"+email+"';");
+                ResultSet rs2 = database.getStatement().executeQuery("SELECT ID, firstName, lastName, email, phoneNumber, password FROM admins WHERE email = '" + email + "';");
                 isUsed = rs2.next();
             }
         } catch (Exception e) {
@@ -29,7 +25,7 @@ public class UsersDatabase {
     public static ArrayList<Visitor> getAllVisitors(Database database) {
         ArrayList<Visitor> visitors = new ArrayList<>();
         try {
-            ResultSet rs = database.getStatement().executeQuery("SELECT * FROM `visitors`;");
+            ResultSet rs = database.getStatement().executeQuery("SELECT * FROM visitors;");
             while (rs.next()) {
                 Visitor visitor = new Visitor();
                 visitor.setID(rs.getInt("ID"));
@@ -49,21 +45,17 @@ public class UsersDatabase {
     public static int getNextVisitorID(Database database) {
         int ID = 0;
         ArrayList<Visitor> visitors = getAllVisitors(database);
-        if (visitors.size()!=0) {
-            int lastRow = visitors.size()-1;
-            Visitor lastVisitor = visitors.get(lastRow);
-            ID = lastVisitor.getID()+1;
+        if (!visitors.isEmpty()) {
+            Visitor lastVisitor = visitors.get(visitors.size() - 1);
+            ID = lastVisitor.getID() + 1;
         }
         return ID;
     }
 
     public static void addVisitor(Visitor v, Database database) {
-        String insert = "INSERT INTO `visitors`(`ID`, `firstName`, `lastName`, `email`,"
-                + " `phoneNumber`, `password`) VALUES ('"+v.getID()+"','"+
-                v.getFirstName()+"','"+v.getLastName()+"','"+v.getEmail()+"','"+
-                v.getPhoneNumber()+"','"+v.getPassword()+"');";
-        String create = "CREATE TABLE `User "+v.getID()+" - Bookings` "
-                + "(ID int, Seats int, MovieID int, ShowID int);";
+        String insert = "INSERT INTO visitors(ID, firstName, lastName, email, phoneNumber, password) VALUES ("
+                + v.getID() + ", '" + v.getFirstName() + "', '" + v.getLastName() + "', '" + v.getEmail() + "', '" + v.getPhoneNumber() + "', '" + v.getPassword() + "');";
+        String create = "CREATE TABLE \"User " + v.getID() + " - Bookings\" (ID INTEGER, Seats INTEGER, MovieID INTEGER, ShowID INTEGER);";
         try {
             database.getStatement().execute(insert);
             database.getStatement().execute(create);
@@ -104,7 +96,7 @@ public class UsersDatabase {
     public static ArrayList<Admin> getAllAdmins(Database database) {
         ArrayList<Admin> admins = new ArrayList<>();
         try {
-            ResultSet rs = database.getStatement().executeQuery("SELECT * FROM `admins`;");
+            ResultSet rs = database.getStatement().executeQuery("SELECT * FROM admins;");
             while (rs.next()) {
                 Admin admin = new Admin();
                 admin.setID(rs.getInt("ID"));
@@ -124,19 +116,16 @@ public class UsersDatabase {
     public static int getNextAdminID(Database database) {
         int ID = 0;
         ArrayList<Admin> admins = getAllAdmins(database);
-        if (admins.size()!=0) {
-            int lastRow = admins.size()-1;
-            Admin lastAdmin = admins.get(lastRow);
-            ID = lastAdmin.getID()+1;
+        if (!admins.isEmpty()) {
+            Admin lastAdmin = admins.get(admins.size() - 1);
+            ID = lastAdmin.getID() + 1;
         }
         return ID;
     }
 
     public static void addAdmin(Admin v, Database database) {
-        String insert = "INSERT INTO `admins`(`ID`, `firstName`, `lastName`, `email`,"
-                + " `phoneNumber`, `password`) VALUES ('"+v.getID()+"','"+
-                v.getFirstName()+"','"+v.getLastName()+"','"+v.getEmail()+"','"+
-                v.getPhoneNumber()+"','"+v.getPassword()+"');";
+        String insert = "INSERT INTO admins(ID, firstName, lastName, email, phoneNumber, password) VALUES ("
+                + v.getID() + ", '" + v.getFirstName() + "', '" + v.getLastName() + "', '" + v.getEmail() + "', '" + v.getPhoneNumber() + "', '" + v.getPassword() + "');";
         try {
             database.getStatement().execute(insert);
             System.out.println("User created successfully");

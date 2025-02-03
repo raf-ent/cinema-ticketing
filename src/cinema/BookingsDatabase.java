@@ -32,15 +32,14 @@ public class BookingsDatabase {
         Show show = MoviesDatabase.getShowTime(movieID, showID, database);
         show.setAvailableSeats(show.getAvailableSeats()-seats);
 
-        String insert = "INSERT INTO `user "+userID+" - bookings`"
-                + "(`ID`, `Seats`, `MovieID`, `ShowID`) VALUES "
-                + "('"+bookingID+"','"+seats+"','"+movieID+"','"+showID+"');";
+        String insert = "INSERT INTO \"User " + userID + " - Bookings\" (ID, Seats, MovieID, ShowID) VALUES ("
+                + bookingID + ", " + seats + ", " + movieID + ", " + showID + ");";
 
-        String update = "UPDATE `movie "+movieID+" - shows` SET "
-                + "`showTime`='"+show.getDate()+"  "+show.getTime()+"',"
-                + "`capacity`='"+show.getCapacity()+"',"
-                + "`availableSeats`='"+show.getAvailableSeats()+"',"
-                + "`place`='"+show.getPlace()+"' WHERE `ID` = "+show.getID()+" ;";
+        String update = "UPDATE \"Movie " + movieID + " - Shows\" SET "
+                + "showTime = '" + show.getDate() + "  " + show.getTime() + "', "
+                + "capacity = " + show.getCapacity() + ", "
+                + "availableSeats = " + show.getAvailableSeats() + ", "
+                + "place = '" + show.getPlace() + "' WHERE ID = " + show.getID() + ";";
 
         try {
             database.getStatement().execute(insert);
@@ -83,8 +82,7 @@ public class BookingsDatabase {
 
     private static Booking getBooking(int userID, int bookingID, Database database) {
         Booking booking = new Booking();
-        String select = "SELECT `ID`, `Seats`, `MovieID`, `ShowID` FROM "
-                + "`user "+userID+" - bookings` WHERE `ID` = "+bookingID+" ;";
+        String select = "SELECT ID, Seats, MovieID, ShowID FROM \"User " + userID + " - Bookings\" WHERE ID = " + bookingID + ";";
         try {
             ResultSet rs = database.getStatement().executeQuery(select);
             rs.next();
@@ -104,10 +102,9 @@ public class BookingsDatabase {
     private static int getNextBookingID(Database database, int userID) {
         int ID = 0;
         ArrayList<Booking> bookings = getUserBookings(database, userID);
-        int size = bookings.size();
-        if (size>0) {
-            Booking lastBooking = bookings.get(size-1);
-            ID = lastBooking.getID()+1;
+        if (!bookings.isEmpty()) {
+            Booking lastBooking = bookings.get(bookings.size() - 1);
+            ID = lastBooking.getID() + 1;
         }
         return ID;
     }
@@ -136,14 +133,13 @@ public class BookingsDatabase {
         Show show = booking.getShow();
         show.setAvailableSeats(show.getAvailableSeats()+booking.getSeats());
 
-        String update = "UPDATE `movie "+booking.getMovie().getID()+" - shows` SET "
-                + "`showTime`='"+show.getDate()+"  "+show.getTime()+"',"
-                + "`capacity`='"+show.getCapacity()+"',"
-                + "`availableSeats`='"+show.getAvailableSeats()+"',"
-                + "`place`='"+show.getPlace()+"' WHERE `ID` = "+show.getID()+" ;";
+        String update = "UPDATE \"Movie " + booking.getMovie().getID() + " - Shows\" SET "
+                + "showTime = '" + show.getDate() + "  " + show.getTime() + "', "
+                + "capacity = " + show.getCapacity() + ", "
+                + "availableSeats = " + show.getAvailableSeats() + ", "
+                + "place = '" + show.getPlace() + "' WHERE ID = " + show.getID() + ";";
 
-        String delete = "DELETE FROM `user "+userID+" - bookings` "
-                + "WHERE `ID` = "+bookingID+" ;";
+        String delete = "DELETE FROM \"User " + userID + " - Bookings\" WHERE ID = " + bookingID + ";";
 
         try {
             database.getStatement().execute(update);
