@@ -4,17 +4,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class Database {
 
     // SQLite uses a file-based connection string.
-    String url = "jdbc:sqlite:cinema-system.db"; // Timeout of 3 seconds
+    String url = "jdbc:sqlite::memory:";
     private Statement statement;
+    private Connection connection;
 
     public Database() {
         try {
             // Establish the connection (database file is created automatically if it does not exist)
-            Connection connection = DriverManager.getConnection(url);
+            connection = DriverManager.getConnection(url);
             statement = connection.createStatement();
             statement.execute("PRAGMA journal_mode = WAL;");
 
@@ -27,6 +30,24 @@ public class Database {
 
     public Statement getStatement() {
         return statement;
+    }
+
+    public Connection getdbConnection(){
+        return connection;
+    }
+
+
+    public boolean doesTableExist(Connection connection, String tableName) {
+        String query = "SELECT name FROM sqlite_master WHERE type='table' AND name=?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, tableName);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // Initialization routine: create main tables if they don't exist
@@ -60,7 +81,6 @@ public class Database {
                     "phoneNumber TEXT, " +
                     "password TEXT" +
                     ");";
-
             statement.execute(createMovies);
             statement.execute(createVisitors);
             statement.execute(createAdmins);
